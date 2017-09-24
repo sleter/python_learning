@@ -28,5 +28,4 @@ def main():
     store_fib(how_many)
     read_file()
 
-
 main()

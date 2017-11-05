@@ -36,7 +36,8 @@ except sqlite3.OperationalError:
     print("Table couldn't be created!")
 
 
-db_conn.execute("INSERT INTO Employees (FName, LName, Age, Address, Salary, HireDate) VALUES ('Szymon', 'Janowski', 20, 'Sezamkowa 123', 100000, date('now'))")
+db_conn.execute("INSERT INTO Employees (FName, LName, Age, Address, Salary, HireDate) "
+                "VALUES ('Szymon', 'Janowski', 20, 'Sezamkowa 123', 100000, date('now'))")
 db_conn.commit()
 
 printDB()

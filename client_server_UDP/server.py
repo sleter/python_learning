@@ -40,10 +40,13 @@ class manage_socket:
         manage_socket.s.sendto(str_pom.encode('utf-8'),manage_socket.addr)
 
     def send_data_op(self):
+        try:
             if(int(manage_socket.received_msg)==manage_socket.__secret_number):
-                manage_socket.s.sendto(b'Zgadles!', manage_socket.addr)
+                manage_socket.s.sendto(b'Odpowiedz> Zgadles!', manage_socket.addr)
             else:
-                manage_socket.s.sendto(b'Nie zgadles!', manage_socket.addr)
+                manage_socket.s.sendto(b'Odpowiedz> Nie zgadles!', manage_socket.addr)
+        except:
+            manage_socket.read_data()
 
 
 def Main():

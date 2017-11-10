@@ -4,7 +4,7 @@ def Main():
     host = '127.0.0.1'
     port = 15200 #random not used port
 
-    server = ('127.0.0.1',5678) #localhost + server port
+    server = ('127.0.0.1', 5678) #localhost + server port
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:

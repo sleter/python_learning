@@ -7,10 +7,12 @@ class manage_socket:
     port = 5678
     id = []
     id_pom = 1
+
     received_msg = ''
     number_of_tries = int((random.randrange(1, 8)+random.randrange(1, 8))/2)
     __secret_number = random.randrange(1, 10)
-
+    prob_1 = number_of_tries
+    prob_2 = number_of_tries
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #socket family and type, Datagram -> UDP packet style
     s.bind((host, port))
 

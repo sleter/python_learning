@@ -1,8 +1,10 @@
-import kivy
-kivy.require('1.9.0')
+#import kivy
+#kivy.require('1.9.0')
 
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
+from kivy import Config
+Config.set('graphics', 'multisamples', '0')
 
 class CalcGridLayout(GridLayout):
 
@@ -19,5 +21,6 @@ class CalculatorApp(App):
     def build(self):
         return CalcGridLayout()
 
-calcApp = CalculatorApp()
-calcApp.run()
+if __name__ == '__main__':
+    calcApp = CalculatorApp()
+    calcApp.run()

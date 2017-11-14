@@ -14,6 +14,8 @@ class manage_socket:
     L = []
     number_of_tries = 0
     __secret_number = 0
+    czy_ktos_zgadl = False
+    bool_pom = False
 
     operacja = 0
     idd = ''
@@ -23,6 +25,20 @@ class manage_socket:
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #socket family and type, Datagram -> UDP packet style
     s.bind((host, port))
+
+    def clear(self):
+        self.operacja = 0
+        self.idd = ''
+        self.czas = ''
+        self.odpowiedz = ''
+        self.id.clear()
+        self.id_pom = 1
+        self.addr = ''
+        self.addr_pom.clear()
+        self.L.clear()
+        self.number_of_tries = 0
+        self.__secret_number = 0
+        self.czy_ktos_zgadl = False
 
     def stworz_pakiet(self):
         self.final_packet = "Czas>"+self.czas+"<Identyfikator>"+self.idd+"<Operacja>"+str(self.operacja)+"<Odpowiedz>"+self.odpowiedz+"<"
@@ -61,7 +77,7 @@ class manage_socket:
         self.L.append(self.operacja)
 
     def give_number_of_tries(self):
-        self.__secret_number = random.randrange(0, 11)
+        self.__secret_number = random.randrange(1, 10)
         self.number_of_tries = int((self.L[0] + self.L[1]) / 2)
         self.operacja = self.number_of_tries
         self.addr = self.addr_pom[0]
@@ -73,25 +89,37 @@ class manage_socket:
 
     def check_number(self):
         self.decode_packet()
-        if(int(self.odpowiedz) == self.__secret_number):
-            self.odpowiedz = 'Zgadłeś!'
+        if not(self.czy_ktos_zgadl):
+            if(int(self.odpowiedz) == self.__secret_number):
+                self.odpowiedz = 'Zgadłeś!'
+                self.czy_ktos_zgadl = True
+            else:
+                self.odpowiedz = 'Nie zgadłeś!'
         else:
-            self.odpowiedz = 'Nie zgadłeś!'
+            self.odpowiedz = "Przeciwnik zgadł pierwszy!"
         self.send_packet()
 
 
 
 
 def Main():
-    m = manage_socket()
     print("Server started")
-    m.give_id()
-    m.give_id()
-    m.getL()
-    m.getL()
-    m.give_number_of_tries()
+    m = manage_socket()
     while True:
-        m.check_number()
+        m.bool_pom = False
+        m.give_id()
+        m.give_id()
+        m.getL()
+        m.getL()
+        m.give_number_of_tries()
+        while True:
+            m.check_number()
+            if(m.bool_pom):
+                m.clear()
+                print("Server rebooted")
+                break
+            if(m.czy_ktos_zgadl):
+                m.bool_pom = True
 
 if __name__ == '__main__':
     Main()

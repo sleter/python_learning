@@ -18,6 +18,7 @@ class packet:
 
     L = 0
     max = 0
+    czy_ktos_zgadl = False
     #-------------------------------------------------------
     operacja = 0
     czas = ''
@@ -57,7 +58,7 @@ class packet:
         self.send_packet()
         self.decode_packet()
         self.max = self.operacja
-        print("Masz {} prób/y /n Wylosowana liczb jest z przedziału <0;10>".format(self.operacja))
+        print("Masz {} prób/y \n Wylosowana liczb jest z przedziału <1;9>".format(self.operacja))
 
     def guess(self):
         self.odpowiedz = input("Zgadnij liczbe: ")
@@ -65,12 +66,16 @@ class packet:
         print(self.odpowiedz)
         if(self.odpowiedz == 'Zgadłeś!'):
             self.max = 0
+        elif(self.odpowiedz == "Przeciwnik zgadł pierwszy!"):
+            self.czy_ktos_zgadl = True
 
 def Main():
     p = packet()
     p.proceed()
     p.proceed1()
     while p.max != 0:
+        if(p.czy_ktos_zgadl):
+            break;
         p.max -= 1
         p.guess()
 

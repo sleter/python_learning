@@ -1,81 +1,70 @@
-from flask import Flask, request
-from flask_restful import Resource, Api, reqparse, fields, marshal
-#from flask_httpauth import HTTPBasicAuth
+from flask import Flask, url_for, request, json, Response, jsonify
 
+data = None
 app = Flask(__name__)
-api = Api(app)
-#auth = HTTPBasicAuth()
 
-# @auth.get_password
-# def get_password(username):
-#     if username == 'miguel':
-#         return 'python'
-#     return None
+@app.route('/')
+def api_root():
+    """Home page method"""
+    return 'Home page' #return render_template('index.html')
 
-
-# @auth.error_handler
-# def unauthorized():
-#     # return 403 instead of 401 to prevent browsers from displaying the default
-#     # auth dialog
-#     return make_response(jsonify({'message': 'Unauthorized access'}), 403)
-
-data_s = [
-    {
-        'id': 1,
-        'question': u'Hum?',
-        'answer': u'K m9',
-        'done': False
+@app.route('/info', methods = ['GET'])
+def api_info():
+    """Method informing about project progress. To check results: curl -i http://127.0.0.1:5000/info"""
+    data = {
+        'Version'  : '0.2',
+        'License' : '',
+        'Authors ': ['Szymon Janowski', 'Agnieszka Rusin', 'Bartosz Mikulski']
     }
-]
+    js = json.dumps(data)
+    resp = Response(js, status=200, mimetype='application/json')
+    resp.headers['Link'] = '?domain_name'
+    return resp
 
-data_fields = {
-    'id': fields.Integer,
-    'question': fields.String,
-    'answer': fields.String,
-    'done': fields.Boolean,
-    'uri': fields.Url('data')
-}
+#-------------------- curl helper --------------------
 
+@app.route('/echo', methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
+def api_echo():
+    if request.method == 'GET':
+        return "ECHO: GET\n"
 
-class MainPage(Resource):
-    def get(self):
-        return {'hello': 'world'}
+    elif request.method == 'POST':
+        return "ECHO: POST\n"
 
-class ShowJSON(Resource):
-    #decorators = [auth.login_required]
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('id', type = int, default = 0, location = 'json')
-        self.reqparse.add_argument('question', type = str, required = True, help = 'No task title provided', location = 'json')
-        self.reqparse.add_argument('answer', type = str, default = "", location = 'json')
-        super(ShowJSON, self).__init__()
-    def get(self):
-        return {'data_s': [marshal(data_s, data_fields) for task in data_s]}
-    def post(self):
-        args = self.reqparse.parse_args()
-        data = {
-            'id': data_s[-1]['id'] + 1,
-            'question': args['question'],
-            'answer': args['answer'],
-            'done': False
-        }
-        data_s.append(data)
-        return {'task': marshal(data, data_fields)}, 201
+    elif request.method == 'PATCH':
+        return "ECHO: PACTH\n"
 
-class GetData(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('id', type=int, location='json')
-        self.reqparse.add_argument('question', type = str, location = 'json')
-        self.reqparse.add_argument('answer', type = str, location = 'json')
-        self.reqparse.add_argument('done', type = bool, location = 'json')
-        super(GetData, self).__init__()
+    elif request.method == 'PUT':
+        return "ECHO: PUT\n"
 
+    elif request.method == 'DELETE':
+        return "ECHO: DELETE"
 
-api.add_resource(MainPage, '/')
-api.add_resource(ShowJSON, '/json', endpoint='json')
-api.add_resource(GetData, '/<string:data_id>')
+#-----------------------------------------------------
 
+@app.route('/do', methods = ['POST'])
+def api_do():
+    """Processing JSON file. To check how it works: curl -X POST http://127.0.0.1:5000/do --data @nazwa_jsona.json"""
+    global data
+    data = request.get_json(force=True)
+    js = json.dumps(data)
+    #modify JSON here
+    print(js)
+    return jsonify(js)
+
+#-----------------------------------------------------
+
+@app.errorhandler(404)
+def not_found(error=None):
+    message = {
+            'status': 404,
+            'message': 'Not Found: ' + request.url,
+    }
+    resp = jsonify(message)
+    resp.status_code = 404
+    return resp
+
+#-----------------------------------------------------
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

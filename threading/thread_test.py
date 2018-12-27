@@ -2,13 +2,17 @@ import logging
 import threading
 import time
 
+print(logging.__file__)
+
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
                     )
 
 def fun1():
     logging.debug('Start')
-    time.sleep(3)
+    # time.sleep(3)
+    while(True):
+        pass
     logging.debug('Close')
 
 def fun2():

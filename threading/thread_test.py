@@ -4,8 +4,9 @@ import time
 
 print(logging.__file__)
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='[%(levelname)s] (%(threadName)-10s) %(message)s',
+logging.basicConfig(
+                    level=logging.DEBUG,
+                    format='[%(levelname)s] (%(threadName)-10s) %(message)s'
                     )
 
 def fun1():
